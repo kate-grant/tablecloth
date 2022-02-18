@@ -2,10 +2,6 @@ module Option = TableclothOption
 
 type ('key, 'value, 'cmp) t = ('key, 'value, 'cmp) Belt.Map.t
 
-module Of (M : TableclothComparator.S) = struct
-  type nonrec 'value t = (M.t, 'value, M.identity) t
-end
-
 let fromArray
     (comparator : ('key, 'id) TableclothComparator.s)
     (values : ('key * 'v) array) : ('key, 'value, 'id) t =
@@ -26,18 +22,9 @@ let length = Belt.Map.size
 
 let add m ~key ~value = Belt.Map.set m key value
 
-let ( .?{}<- ) (map : ('key, 'value, 'id) t) (key : 'key) (value : 'value) :
-    ('key, 'value, 'id) t =
-  add map ~key ~value
-
-
 let remove = Belt.Map.remove
 
 let get = Belt.Map.get
-
-let ( .?{} ) (map : ('key, 'value, _) t) (key : 'key) : 'value option =
-  get map key
-
 
 let update m ~key ~f = Belt.Map.update m key f
 
@@ -105,7 +92,9 @@ module Poly = struct
 end
 
 module Int = struct
-  type nonrec 'value t = 'value Of(TableclothInt).t
+  type identity
+
+  type nonrec 'value t = (TableclothInt.t, 'value, identity) t
 
   let fromArray a = Poly.fromArray a |> Obj.magic
 
@@ -117,7 +106,9 @@ module Int = struct
 end
 
 module String = struct
-  type nonrec 'value t = 'value Of(TableclothString).t
+  type identity
+
+  type nonrec 'value t = (TableclothString.t, 'value, identity) t
 
   let fromArray a = Poly.fromArray a |> Obj.magic
 

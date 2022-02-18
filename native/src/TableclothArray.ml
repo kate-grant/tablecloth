@@ -93,7 +93,7 @@ let partition = Base.Array.partition_tf
 
 let split_at a ~index =
   ( Base.Array.init index ~f:(fun i -> a.(i))
-  , Base.Array.init (length a - 1) ~f:(fun i -> a.(index + i)) )
+  , Base.Array.init (length a - index) ~f:(fun i -> a.(index + i)) )
 
 
 let split_when a ~f =
@@ -124,10 +124,16 @@ let all = Base.Array.for_all
 
 let includes = Base.Array.mem
 
+let reverse = Base.Array.rev_inplace
+
 let values t =
-  fold t ~initial:[] ~f:(fun results element ->
-      match element with None -> results | Some value -> value :: results )
-  |> from_list
+  let result =
+    fold t ~initial:[] ~f:(fun results element ->
+        match element with None -> results | Some value -> value :: results )
+    |> from_list
+  in
+  reverse result ;
+  result
 
 
 let join t ~sep = Stdlib.String.concat sep (Array.to_list t)
@@ -197,8 +203,6 @@ let extent t ~compare =
 
 let sort t = Base.Array.sort t
 
-let reverse = Base.Array.rev_inplace
-
 let for_each a ~f = Base.Array.iter a ~f
 
 let for_each_with_index a ~f = Base.Array.iteri a ~f
@@ -227,7 +231,7 @@ let equal equal a b =
     loop 0
 
 
-let compare compare a b =
+let compare ~f:compare a b =
   match Int.compare (length a) (length b) with
   | 0 ->
       if length a == 0

@@ -8,27 +8,19 @@ let suite =
       test "constant" (fun () -> expect (Fun.constant 1 2) |> toEqual Eq.int 1) ;
       test "sequence" (fun () -> expect (Fun.sequence 1 2) |> toEqual Eq.int 2) ;
       test "flip" (fun () ->
-          expect (Fun.flip Int.( / ) 2 4) |> toEqual Eq.int 2 ) ;
+          expect (Fun.flip Int.subtract 2 4) |> toEqual Eq.int 2 ) ;
+      test "negate" (fun () ->
+          let num = 5 in
+          let greaterThanFour n = n > 4 in
+          expect (Fun.negate greaterThanFour num) |> toEqual Eq.bool false ) ;
       test "apply" (fun () ->
           expect (Fun.apply (fun a -> a + 1) 1) |> toEqual Eq.int 2 ) ;
       let increment x = x + 1 in
       let double x = x * 2 in
       test "compose" (fun () ->
-          expect (Fun.compose increment double 1) |> toEqual Eq.int 3 ) ;
-      test "<<" (fun () ->
-          expect
-            ((let open Fun in
-             increment << double)
-               1 )
-          |> toEqual Eq.int 3 ) ;
+          expect (Fun.compose 1 increment double) |> toEqual Eq.int 4 ) ;
       test "composeRight" (fun () ->
-          expect (Fun.composeRight increment double 1) |> toEqual Eq.int 4 ) ;
-      test ">>" (fun () ->
-          expect
-            ((let open Fun in
-             increment >> double)
-               1 )
-          |> toEqual Eq.int 4 ) ;
+          expect (Fun.composeRight 1 increment double) |> toEqual Eq.int 3 ) ;
       test "tap" (fun () ->
           expect
             ( Array.filter [| 1; 3; 2; 5; 4 |] ~f:Int.isEven
@@ -38,6 +30,7 @@ let suite =
                (let open Eq in
                array int)
                [| 0; 2 |] ) ;
+
       test "curry" (fun () ->
           expect (Fun.curry (fun (a, b) -> a / b) 8 4)
           |> toEqual
