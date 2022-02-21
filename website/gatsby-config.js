@@ -2,7 +2,7 @@ const path = require('path')
 
 module.exports = {
   pathPrefix: "/",
-  assetPrefix: "DARK_STATIC_ASSETS_BASE_URL",
+  assetPrefix: "https://DARK_STATIC_ASSETS_BASE_URL",
   siteMetadata: {
     title: 'Tablecloth',
     description: 'A standard library enhancement for Bucklescript and Native',
